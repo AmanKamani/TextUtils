@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+
+    <title>Text Utils</title>
+      <style>
+          nav #navbarColor02 .navbar-nav li a, .navbar-light .navbar-brand {
+            color: white;
+          }
+          .form-group{
+                margin-bottom: 1rem;
+                margin-top: 1rem;
+          }
+      </style>
+      <script>
+          function copyText(){
+            let textarea = document.getElementById('outputarea');
+            textarea.select();
+            document.execCommand('copy');
+          }
+          function toggleTextBox(element){
+            textbox = document.getElementById('removeTextBox');
+            if(element.checked){
+
+                textbox.required = true;
+                textbox.style.display = 'block';
+            }
+            else{
+                textbox.required = false;
+                textbox.style.display = 'none';
+            }
+          }
+      </script>
+  </head>
+  <body>
+    <nav class="navbar navbar-dark navbar-expand-lg bg-primary">
+      <a class="navbar-brand" href="/">Text/Utils</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarColor02">
+        <ul class="navbar-nav mr-auto">
+            <!--<li class="nav-item active">-->
+              <!--<a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>-->
+            <!--</li>-->
+            <!--<li class="nav-item">-->
+              <!--<a class="nav-link" href="#">Hello</a>-->
+            <!--</li>-->
+      </ul>
+      </div>
+    </nav>
+    <div class="container">
+        <form class="form-horizontal" action="/analyze" method="post" name="mainForm">{% csrf_token %}
+            <div class="form-group">
+                <textarea class="form-control" placeholder="Enter Your Text Here !!!"  rows="6" name="input" id="inputArea" required>{{input}}</textarea>
+            </div>
+            <div class="form-group row">
+                <div class=" mr-2 col-md-3">
+                    <fieldset class="border px-4 py-2 pb-3">
+                        <legend class="w-auto">Text Case</legend>
+                        <div class="custom-control custom-radio custom-control">
+                          <input type="radio" id="customRadioInline1" name="textcase"  value="default" class="custom-control-input" checked>
+                          <label class="custom-control-label" for="customRadioInline1">Default</label>
+                        </div>
+                        <div class="custom-control custom-radio custom-control">
+                          <input type="radio" id="customRadioInline2" name="textcase" value="lower" class="custom-control-input" {% ifequal textcase "lower"%}checked{%endifequal%}/>
+                          <label class="custom-control-label" for="customRadioInline2">Lower</label>
+                        </div>
+                        <div class="custom-control custom-radio custom-control">
+                          <input type="radio" id="customRadioInline3" name="textcase" value="upper" class="custom-control-input" {%ifequal textcase "upper"%}checked{%endifequal%}>
+                          <label class="custom-control-label" for="customRadioInline3">Upper</label>
+                        </div>
+                    </fieldset>
+                </div>
+                <div class=" mr-2 col-md-3">
+                    <fieldset class="border px-4 py-2 pb-3">
+                        <legend class="w-auto">Features</legend>
+                        <div class="custom-control custom-switch">
+                          <input name="removeSpace" type="checkbox" class="custom-control-input" id="customSwitch1"
+                                 {%ifequal removeSpace "on"%}checked{%endifequal%}>
+                          <label class="custom-control-label" for="customSwitch1">Remove Extra Space</label>
+                        </div>
+                        <div class="custom-control custom-switch">
+                          <input name="removeNewLine" type="checkbox" class="custom-control-input" id="customSwitch2"
+                                {%ifequal removeNewLine "on"%}checked{%endifequal%}>
+                          <label class="custom-control-label" for="customSwitch2">Remove Newline</label>
+                        </div>
+                        <div class="custom-control custom-switch">
+                          <input name="removePunc" type="checkbox" class="custom-control-input" id="customSwitch3"
+                                {%ifequal removePunc "on"%}checked{%endifequal%}>
+                          <label class="custom-control-label" for="customSwitch3">Remove Punctuation</label>
+                        </div>
+                    </fieldset>
+                </div>
+                <div class="mr-2 col-md-3">
+                    <fieldset class="border px-4 py-0">
+                        <legend class="w-auto">Customize</legend>
+                        <div class="form-check">
+                          <input class="form-check-input" type="checkbox" id="removeCheckBox" onclick="toggleTextBox(this)" name="removeTextCheck"
+                                {%ifequal removeTextCheck "on"%}
+                                    checked
+                                {%endifequal%}>
+                          <label class="form-check-label" for="removeCheckBox">Remove Text?</label>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" class="form-control" id="removeTextBox" placeholder="Enter Text" name="removeText"
+                                   style="display:none;"
+                                   value = {%ifequal removeTextCheck "on"%}{{removeText}}{%endifequal%}>
+                            {%ifequal removeTextCheck "on"%}
+                            <script>
+                                toggleTextBox(document.getElementById('removeCheckBox'));
+                            </script>
+                            {%endifequal%}
+                        </div>
+                    </fieldset>
+                </div>
+                <div class="form-group align-self-center ml-3">
+                    <button type="submit" class="h-20 btn btn-info">Analyze Text</button>
+                </div>
+                <div class="form-group align-self-center ml-3">
+                    <button type="button" class="btn btn-danger" onClick="window.location.href='/'" >Reset Data</button>
+                </div>
+            </div>
+        </form>
+
+        <div class="form-group mt-4">
+
+            <label for="outputarea">Output Text Here: </label>
+
+            <button type="button" class="float-right btn btn-secondary ml-3 mb-1 btn-sm" onclick="copyText()">Copy</button>
+            <textarea readonly id="outputarea" class="form-control"  rows="6" name="input">{{reply}}</textarea>
+            {%if reply%}
+                <div class="alert alert-success mt-2" role="alert">
+                    <p>Text Analyzed Successfully!!!!</p>
+                    {% if charCount %}
+                        <p>Total Characters: {{charCount}}</p>
+                    {% endif%}
+                    {% if wordCount %}
+                        <p>Total Words: {{wordCount}}</p>
+                    {% endif%}
+                    {% if lineCount %}
+                        <p>Total NewLine Characters: {{lineCount}}</p>
+                    {% endif%}
+                </div>
+            {%endif%}
+        </div>
+
+    </div>
+
+    <!-- Optional JavaScript; choose one of the two! -->
+
+    <!-- Option 1: jQuery and Bootstrap Bundle (includes Popper) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
+
+    <!-- Option 2: jQuery, Popper.js, and Bootstrap JS
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.min.js" integrity="sha384-w1Q4orYjBQndcko6MimVbzY0tgp4pWB4lZ7lr30WKz0vr/aWKhXdBNmNb5D92v7s" crossorigin="anonymous"></script>
+    -->
+  </body>
+</html>
